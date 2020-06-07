@@ -204,6 +204,54 @@ class AvlTreeNode<ValueType> {
       return this.rightChildren.insertNode(node);
   }
 
+  public find(value: ValueType): number[] | null {
+    const comparisonResult = this.comparator.compare(this.value, value);
+
+    if (comparisonResult === 0)
+      return this.indexes;
+    else if (comparisonResult < 0 && this.leftChildren)
+      return this.leftChildren.find(value);
+    else if (comparisonResult > 0 && this.rightChildren)
+      return this.rightChildren.find(value);
+    else
+      return null;
+  }
+
+  public findStartingWith(value: ValueType): number[] | null {
+    const comparisonResult = this.comparator.compare(this.value, value);
+
+    if (comparisonResult < 0 && this.leftChildren)
+      return this.leftChildren.findStartingWith(value);
+    else if (comparisonResult > 0 && this.rightChildren)
+      return this.rightChildren.findStartingWith(value);
+
+    let returnIndexes = new Array<number>();
+
+    returnIndexes.push(...this.indexes);
+    returnIndexes.push(...this.getMatchesOnChildTree(this.leftChildren, value));
+    returnIndexes.push(...this.getMatchesOnChildTree(this.rightChildren, value));
+
+    if (returnIndexes.length)
+      return returnIndexes;
+    else
+      return null;
+  }
+
+  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType) : number[] {
+    if (!children)
+      return new Array<number>();
+
+    let matchesOnChild = children.findStartingWith(value);
+    if (matchesOnChild)
+      return matchesOnChild;
+
+    return new Array<number>();
+  }
+
+  public findRange(beginValue: ValueType, endValue: ValueType): number[] | null {
+    return new Array<number>();
+  }
+
 };
 
 export default AvlTreeNode;
