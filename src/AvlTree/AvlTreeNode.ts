@@ -248,8 +248,31 @@ class AvlTreeNode<ValueType> {
     return new Array<number>();
   }
 
-  public findRange(beginValue: ValueType, endValue: ValueType): number[] | null {
-    return new Array<number>();
+  public findRange(beginValue: ValueType, endValue: ValueType): AvlTreeNode<ValueType>[] | null {
+    let selectedValues = new Array<AvlTreeNode<ValueType>>();
+
+    return this.searchRange(selectedValues, beginValue, endValue);
+  }
+
+  public searchRange(selectedValue: AvlTreeNode<ValueType>[], beginValue: ValueType, endValue: ValueType) : AvlTreeNode<ValueType>[] | null {
+    const beginComparisonResult = this.comparator.compare(this.value, beginValue);
+
+    if (beginComparisonResult < 0 && this.leftChildren) {
+      return this.leftChildren.searchRange(selectedValue, this.value, beginValue);
+    } else if (beginComparisonResult >= 0) {
+      const endComparisonResult = this.comparator.compare(this.value, endValue);
+      if (endComparisonResult <= 0) {
+        selectedValue.push(this);
+        if (this.rightChildren) {
+          return this.rightChildren.searchRange(selectedValue, this.value, endValue);
+        }
+      } else if (endComparisonResult > 0) {
+        if (this.leftChildren) {
+          return this.leftChildren.searchRange(selectedValue, this.value, endValue);
+        }
+      }
+    }
+    return selectedValue;
   }
 
 };
