@@ -3,23 +3,33 @@ import fs from 'fs';
 
 import Person from '../types/Person';
 
-const list = new Array<Person>();
+class PeopleList {
+  private list: Person[];
 
-fs.createReadStream('./testList.csv')
-  .pipe(csvParser({
-    separator: ';',
-    headers: [
-      "cpf",
-      "rg",
-      "name",
-      "birthDay",
-      "cityOfBirth"
-    ]
-  }))
-  .on('data', (row) => {
-    list.push(row);
-  })
-  .on('end', () => {
-    console.log("Reading Completed");
-    console.log(list);
-  })
+  public constructor() {
+    this.list = new Array<Person>();
+  }
+
+  public updateList(filePath: string) {
+    fs.createReadStream('./testList.csv')
+      .pipe(csvParser({
+        separator: ';',
+        headers: [
+          "cpf",
+          "rg",
+          "name",
+          "birthDay",
+          "cityOfBirth"
+        ]
+      }))
+      .on('data', (row) => {
+        this.list.push(row);
+      })
+      .on('end', () => {
+        console.log("Reading Completed");
+        console.log(this.list);
+      });
+  }
+}
+
+export default PeopleList;

@@ -2,3 +2,4 @@ node_modules/*
 dist/*
 .vscode/*
 *.log
+public/received_csv/*PeopleList.csv
