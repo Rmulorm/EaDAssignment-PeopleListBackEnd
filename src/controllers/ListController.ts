@@ -16,6 +16,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage }).single('file');
 
+const defaultQuery = (): Promise<Person[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(peopleList.get());
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 const queryByCPf = (queriedCpf: string): Promise<Person[]> => {
   return new Promise((resolve, reject) => {
     const cpf = Number(queriedCpf);
@@ -62,7 +72,9 @@ export default {
     } else if (request.query.beginDate && typeof request.query.beginDate === 'string' && request.query.endDate && typeof request.query.endDate === 'string') {
       // Insert here code to queryDateRage
     } else {
-      response.status(200).json(peopleList.get());
+      defaultQuery()
+      .then((people) => { response.status(200).json(people) } )
+      .catch((error) => { response.status(404).send(error) });
     }
   }
 };

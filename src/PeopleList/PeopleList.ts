@@ -70,6 +70,9 @@ class PeopleList {
   }
 
   public get(): Person[] {
+    if (this.list.length === 0)
+      throw new Error ("List is empty");
+
     return this.list;
   }
 
