@@ -4,7 +4,7 @@ class DateComparator implements Comparator {
   public compare(selfValue: Date, otherValue: Date): number {
     return selfValue > otherValue
       ? 1
-      : selfValue.getTime() === otherValue.getTime()
+      : selfValue === otherValue
         ? 0
         : -1;
   }

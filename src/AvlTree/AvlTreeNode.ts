@@ -1,4 +1,5 @@
 import Comparator from "../types/Comparator";
+import Tree from "../types/Tree";
 
 class AvlTreeNode<ValueType> {
   private value: ValueType;
@@ -41,28 +42,18 @@ class AvlTreeNode<ValueType> {
     return this.indexes;
   }
 
-  public setRightChildren(node: AvlTreeNode<ValueType> | null) {
-    this.rightChildren = node;
-
-    this.updateTreeHeight();
-    this.updateBalanceFactor();
-  }
-
-  public setLeftChildren(node: AvlTreeNode<ValueType> | null) {
-    this.leftChildren = node;
-
-    this.updateTreeHeight();
-    this.updateBalanceFactor();
-  }
-
   public insert(value: ValueType, index: number): AvlTreeNode<ValueType> {
     const comparisonResult = this.comparator.compare(this.value, value);
 
     if (comparisonResult === 0) {
-      throw new Error("This value is already in the Tree");
+      if (this.indexes.includes(index)) {
+        throw new Error("This value is already in the Tree");
+      } else {
+        this.indexes.push(index);
+      }
     }
 
-    if (comparisonResult < 0) {
+    if (comparisonResult > 0) {
       this.leftChildren = this.insertToTheLeft(value, index);
     } else {
       this.rightChildren = this.insertToTheRight(value, index);
@@ -129,6 +120,20 @@ class AvlTreeNode<ValueType> {
     this.setLeftChildren(node);
 
     return this;
+  }
+
+  public setRightChildren(node: AvlTreeNode<ValueType> | null) {
+    this.rightChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+  }
+
+  public setLeftChildren(node: AvlTreeNode<ValueType> | null) {
+    this.leftChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
   }
 
   private updateTreeHeight() {

@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
     callBack(null, 'public/received_csv')
   },
   filename: function (request: Request, file: Express.Multer.File, callBack: Function) {
-    callBack(null, Date.now() + '-' + 'PeopleList.csv')
+    callBack(null, 'PeopleList.csv')
   }
 });
 
@@ -24,6 +24,12 @@ export default {
         return;
       }
       response.status(200).send();
+
+      peopleList.updateList();
     });
-  }
+  },
+
+  // index(request: Request, response: Response) {
+    
+  // }
 };
