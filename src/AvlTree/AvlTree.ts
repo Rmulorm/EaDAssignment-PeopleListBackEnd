@@ -1,7 +1,7 @@
 import AvlTreeNode from "./AvlTreeNode"
 import Comparator from "../types/Comparator";
 
-class Tree<ValueType> {
+class AvlTree<ValueType> {
   private root: AvlTreeNode<ValueType> | null;
   private comparator: Comparator;
 
@@ -17,22 +17,19 @@ class Tree<ValueType> {
       this.root = this.root.insert(value, index);
   }
 
-  public delete(value: ValueType) {
-    return(new Promise((resolve, reject) => {
-      if (!this.root) {
-        reject(new Error("Empty Tree"));
-        return;
-      }
-      try {
-        this.root = this.root.remove(value);
-      } catch(error) {
-        reject(error);
-        return;
-      }
+  public getAll(): number[] {
+    if (!this.root)
+      throw new Error ("Tree is empty");
 
-      resolve();
-    }));
+    return this.root.getIndexes();
+  }
+
+  public find(value: ValueType): number[] | null {
+    if (!this.root)
+      throw new Error ("Tree is empty");
+
+    return this.root.find(value);
   }
 };
 
-export default Tree;
+export default AvlTree;

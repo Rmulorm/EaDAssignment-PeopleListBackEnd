@@ -14,7 +14,8 @@ class AvlTreeNode<ValueType> {
 
   public constructor(value: ValueType, index: number, comparator: Comparator) {
     this.value = value;
-    this.indexes = new Array<number>(index);
+    this.indexes = new Array<number>();
+    this.indexes.push(index);
 
     this.treeHeight = 1;
     this.balanceFactor = 0;
@@ -38,31 +39,29 @@ class AvlTreeNode<ValueType> {
   }
 
   public getIndexes(): number[] {
-    return this.indexes;
-  }
+    const returnIndexes = new Array<number>();
 
-  public setRightChildren(node: AvlTreeNode<ValueType> | null) {
-    this.rightChildren = node;
+    returnIndexes.push(...this.indexes);
+    if (this.leftChildren)
+      returnIndexes.push(...this.leftChildren.getIndexes());
+    if (this.rightChildren)
+      returnIndexes.push(...this.rightChildren.getIndexes());
 
-    this.updateTreeHeight();
-    this.updateBalanceFactor();
-  }
-
-  public setLeftChildren(node: AvlTreeNode<ValueType> | null) {
-    this.leftChildren = node;
-
-    this.updateTreeHeight();
-    this.updateBalanceFactor();
+    return returnIndexes;
   }
 
   public insert(value: ValueType, index: number): AvlTreeNode<ValueType> {
     const comparisonResult = this.comparator.compare(this.value, value);
 
     if (comparisonResult === 0) {
-      throw new Error("This value is already in the Tree");
+      if (this.indexes.includes(index)) {
+        throw new Error("This value is already in the Tree");
+      } else {
+        this.indexes.push(index);
+      }
     }
 
-    if (comparisonResult < 0) {
+    if (comparisonResult > 0) {
       this.leftChildren = this.insertToTheLeft(value, index);
     } else {
       this.rightChildren = this.insertToTheRight(value, index);
@@ -129,6 +128,20 @@ class AvlTreeNode<ValueType> {
     this.setLeftChildren(node);
 
     return this;
+  }
+
+  public setRightChildren(node: AvlTreeNode<ValueType> | null) {
+    this.rightChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
+  }
+
+  public setLeftChildren(node: AvlTreeNode<ValueType> | null) {
+    this.leftChildren = node;
+
+    this.updateTreeHeight();
+    this.updateBalanceFactor();
   }
 
   private updateTreeHeight() {
@@ -209,9 +222,9 @@ class AvlTreeNode<ValueType> {
 
     if (comparisonResult === 0)
       return this.indexes;
-    else if (comparisonResult < 0 && this.leftChildren)
+    else if (comparisonResult > 0 && this.leftChildren)
       return this.leftChildren.find(value);
-    else if (comparisonResult > 0 && this.rightChildren)
+    else if (comparisonResult < 0 && this.rightChildren)
       return this.rightChildren.find(value);
     else
       return null;
