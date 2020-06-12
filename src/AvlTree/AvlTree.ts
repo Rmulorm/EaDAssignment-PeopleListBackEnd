@@ -16,6 +16,20 @@ class AvlTree<ValueType> {
     else
       this.root = this.root.insert(value, index);
   }
+
+  public getAll(): number[] {
+    if (!this.root)
+      throw new Error ("Tree is empty");
+
+    return this.root.getIndexes();
+  }
+
+  public find(value: ValueType): number[] | null {
+    if (!this.root)
+      throw new Error ("Tree is empty");
+
+    return this.root.find(value);
+  }
 };
 
 export default AvlTree;

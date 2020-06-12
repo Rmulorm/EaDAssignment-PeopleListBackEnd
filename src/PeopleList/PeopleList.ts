@@ -68,6 +68,23 @@ class PeopleList {
   private parseDate(date: string): Date {
     return new Date(`${date.substring(6)}/${date.substring(3,5)}/${date.substring(0,2)}`);
   }
+
+  public get(): Person[] {
+    return this.list;
+  }
+
+  public getByCpf(cpf: number): Person[] {
+    const personIndexes = this.cpfTree.find(cpf);
+
+    if (!personIndexes) {
+      throw new Error(`Person with CPF ${cpf} doesn't exist.`);
+    }
+
+    const personReturn = new Array<Person>();
+    personIndexes.forEach((index) => { personReturn.push(this.list[index]) } );
+
+    return personReturn;
+  }
 }
 
 export default PeopleList;

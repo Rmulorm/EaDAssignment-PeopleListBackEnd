@@ -8,5 +8,6 @@ routes.get('/', (request: Request, response: Response) => {
 })
 
 routes.post('/list', listController.create);
+routes.get('/list', listController.index);
 
 export default routes;

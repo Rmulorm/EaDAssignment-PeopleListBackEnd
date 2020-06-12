@@ -1,5 +1,4 @@
 import Comparator from "../types/Comparator";
-import Tree from "../types/Tree";
 
 class AvlTreeNode<ValueType> {
   private value: ValueType;
@@ -15,7 +14,8 @@ class AvlTreeNode<ValueType> {
 
   public constructor(value: ValueType, index: number, comparator: Comparator) {
     this.value = value;
-    this.indexes = new Array<number>(index);
+    this.indexes = new Array<number>();
+    this.indexes.push(index);
 
     this.treeHeight = 1;
     this.balanceFactor = 0;
@@ -39,7 +39,15 @@ class AvlTreeNode<ValueType> {
   }
 
   public getIndexes(): number[] {
-    return this.indexes;
+    const returnIndexes = new Array<number>();
+
+    returnIndexes.push(...this.indexes);
+    if (this.leftChildren)
+      returnIndexes.push(...this.leftChildren.getIndexes());
+    if (this.rightChildren)
+      returnIndexes.push(...this.rightChildren.getIndexes());
+
+    return returnIndexes;
   }
 
   public insert(value: ValueType, index: number): AvlTreeNode<ValueType> {
@@ -214,9 +222,9 @@ class AvlTreeNode<ValueType> {
 
     if (comparisonResult === 0)
       return this.indexes;
-    else if (comparisonResult < 0 && this.leftChildren)
+    else if (comparisonResult > 0 && this.leftChildren)
       return this.leftChildren.find(value);
-    else if (comparisonResult > 0 && this.rightChildren)
+    else if (comparisonResult < 0 && this.rightChildren)
       return this.rightChildren.find(value);
     else
       return null;
