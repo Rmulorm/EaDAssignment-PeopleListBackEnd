@@ -250,7 +250,7 @@ class AvlTreeNode<ValueType> {
       return null;
   }
 
-  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType) : number[] {
+  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType): number[] {
     if (!children)
       return new Array<number>();
 
@@ -261,33 +261,34 @@ class AvlTreeNode<ValueType> {
     return new Array<number>();
   }
 
-  public findRange(beginValue: ValueType, endValue: ValueType): AvlTreeNode<ValueType>[] | null {
-    let selectedValues = new Array<AvlTreeNode<ValueType>>();
+  public findRange(beginValue: ValueType, endValue: ValueType): number[] | null {
+    const selectedValues = new Array<number>();
 
     return this.searchRange(selectedValues, beginValue, endValue);
   }
 
-  public searchRange(selectedValue: AvlTreeNode<ValueType>[], beginValue: ValueType, endValue: ValueType) : AvlTreeNode<ValueType>[] | null {
+  public searchRange(selectedValues: number[], beginValue: ValueType, endValue: ValueType): number[] | null {
     const beginComparisonResult = this.comparator.compare(this.value, beginValue);
+    const endComparisonResult = this.comparator.compare(this.value, endValue);
 
-    if (beginComparisonResult < 0 && this.leftChildren) {
-      return this.leftChildren.searchRange(selectedValue, this.value, beginValue);
-    } else if (beginComparisonResult >= 0) {
-      const endComparisonResult = this.comparator.compare(this.value, endValue);
+    if (beginComparisonResult < 0 && this.rightChildren) {
+      return this.rightChildren.searchRange(selectedValues, beginValue, endValue);
+    } else {
       if (endComparisonResult <= 0) {
-        selectedValue.push(this);
-        if (this.rightChildren) {
-          return this.rightChildren.searchRange(selectedValue, this.value, endValue);
-        }
-      } else if (endComparisonResult > 0) {
+        selectedValues.push(...this.indexes);
         if (this.leftChildren) {
-          return this.leftChildren.searchRange(selectedValue, this.value, endValue);
+          return this.leftChildren.searchRange(selectedValues, beginValue, endValue);
+        } else if (this.rightChildren) {
+          return this.rightChildren.searchRange(selectedValues, beginValue, endValue);
+        }
+      } else {
+        if (this.leftChildren) {
+          return this.leftChildren.searchRange(selectedValues, beginValue, endValue);
         }
       }
     }
-    return selectedValue;
+    return selectedValues;
   }
-
 };
 
 export default AvlTreeNode;
