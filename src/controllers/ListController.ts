@@ -3,6 +3,7 @@ import multer from 'multer';
 
 import PeopleList from '../PeopleList/PeopleList';
 import Person from '../types/Person';
+import AvlTreeNode from '../AvlTree/AvlTreeNode';
 
 const peopleList = new PeopleList();
 
@@ -41,6 +42,22 @@ const queryByCPf = (queriedCpf: string): Promise<Person[]> => {
   })
 }
 
+const queryDateRange = (queriedDateBegin: string, queriedDateEnd: string): Promise<Person[]> => {
+  return new Promise((resolve, reject) => {
+    const beginDate = new Date(queriedDateBegin);
+    const endDate = new Date(queriedDateEnd);
+    if (!beginDate || !endDate) {
+      reject(new ReferenceError("Filter 'begin date' and 'end date' must be filled"));
+    }
+    try {
+      const people = peopleList.getByDateRange(beginDate, endDate);
+      resolve(people);
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
 export default {
   create(request: Request, response: Response) {
     upload(request, response, (error: any) => {
@@ -70,7 +87,16 @@ export default {
     } else if (request.query.name && typeof request.query.name === 'string') {
       // Insert here code to queryByName
     } else if (request.query.beginDate && typeof request.query.beginDate === 'string' && request.query.endDate && typeof request.query.endDate === 'string') {
-      // Insert here code to queryDateRage
+      queryDateRange(request.query.beginDate, request.query.endDate)
+      .then((people) => {
+        response.status(200).json(people);
+      })
+      .catch((error) => {
+        if (error instanceof ReferenceError)
+          response.status(400).send("Filter 'beginDate' and 'endDate' must be dates");
+
+          response.status(404).send(error);
+      });
     } else {
       defaultQuery()
       .then((people) => { response.status(200).json(people) } )

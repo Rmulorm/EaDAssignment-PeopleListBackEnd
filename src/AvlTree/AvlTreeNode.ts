@@ -271,22 +271,18 @@ class AvlTreeNode<ValueType> {
     const beginComparisonResult = this.comparator.compare(this.value, beginValue);
     const endComparisonResult = this.comparator.compare(this.value, endValue);
 
-    if (beginComparisonResult < 0 && this.rightChildren) {
-      return this.rightChildren.searchRange(selectedValues, beginValue, endValue);
-    } else {
-      if (endComparisonResult <= 0) {
-        selectedValues.push(...this.indexes);
-        if (this.leftChildren) {
-          return this.leftChildren.searchRange(selectedValues, beginValue, endValue);
-        } else if (this.rightChildren) {
-          return this.rightChildren.searchRange(selectedValues, beginValue, endValue);
-        }
-      } else {
-        if (this.leftChildren) {
-          return this.leftChildren.searchRange(selectedValues, beginValue, endValue);
-        }
-      }
+    if (beginComparisonResult > 0 && this.leftChildren) {
+      this.leftChildren.searchRange(selectedValues, beginValue, endValue);
     }
+
+    if (beginComparisonResult >= 0 && endComparisonResult <= 0) {
+      selectedValues.push(...this.indexes);
+    }
+
+    if (endComparisonResult < 0 && this.rightChildren) {
+      this.rightChildren.searchRange(selectedValues, beginValue, endValue);
+    }
+
     return selectedValues;
   }
 };
