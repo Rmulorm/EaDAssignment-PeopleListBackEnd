@@ -88,6 +88,19 @@ class PeopleList {
 
     return personReturn;
   }
+
+  public getByName(name: string): Person[] {
+    const personIndexes = this.nameTree.findStartingWith(name);
+
+    if (!personIndexes) {
+      throw new Error(`Person with name ${name} doesn't exist.`);
+    }
+
+    const personReturn = new Array<Person>();
+    personIndexes.forEach((index) => { personReturn.push(this.list[index]) } );
+
+    return personReturn;
+  }
 }
 
 export default PeopleList;

@@ -30,6 +30,13 @@ class AvlTree<ValueType> {
 
     return this.root.find(value);
   }
+
+  public findStartingWith(value: string): number[] | null {
+    if (!this.root)
+      throw new Error ("Tree is empty");
+
+    return this.root.findStartingWith(value);
+  }
 };
 
 export default AvlTree;

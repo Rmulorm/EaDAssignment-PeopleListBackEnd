@@ -230,35 +230,34 @@ class AvlTreeNode<ValueType> {
       return null;
   }
 
-  public findStartingWith(value: ValueType): number[] | null {
-    const comparisonResult = this.comparator.compare(this.value, value);
+  public findStartingWith(value: string): number[] | null {
+    const selectedValues = new Array<number>();
 
-    if (comparisonResult < 0 && this.leftChildren)
-      return this.leftChildren.findStartingWith(value);
-    else if (comparisonResult > 0 && this.rightChildren)
-      return this.rightChildren.findStartingWith(value);
-
-    let returnIndexes = new Array<number>();
-
-    returnIndexes.push(...this.indexes);
-    returnIndexes.push(...this.getMatchesOnChildTree(this.leftChildren, value));
-    returnIndexes.push(...this.getMatchesOnChildTree(this.rightChildren, value));
-
-    if (returnIndexes.length)
-      return returnIndexes;
-    else
-      return null;
+    return this.searchStartingWith(selectedValues, value);
   }
 
-  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType) : number[] {
-    if (!children)
-      return new Array<number>();
+  private searchStartingWith(selectedValues: number[], value: string): number[] | null {
+    const comparisonResult = this.comparator.compare(new String(this.value).substring(0, value.length), value);
 
-    let matchesOnChild = children.findStartingWith(value);
-    if (matchesOnChild)
-      return matchesOnChild;
+    if (comparisonResult > 0 && this.leftChildren) {
+      this.leftChildren.searchStartingWith(selectedValues, value);
+    }
 
-    return new Array<number>();
+    if (comparisonResult == 0) {
+      selectedValues.push(...this.indexes);
+      if (this.leftChildren) {
+        this.leftChildren.searchStartingWith(selectedValues, value);
+      }
+      if (this.rightChildren) {
+        this.rightChildren.searchStartingWith(selectedValues, value);
+      }
+    }
+
+    if (comparisonResult < 0 && this.rightChildren) {
+      this.rightChildren.searchStartingWith(selectedValues, value);
+    }
+
+    return selectedValues;
   }
 
   public findRange(beginValue: ValueType, endValue: ValueType): number[] | null {
