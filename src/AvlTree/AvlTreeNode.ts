@@ -53,14 +53,14 @@ class AvlTreeNode<ValueType> {
   public insert(value: ValueType, index: number): AvlTreeNode<ValueType> {
     const comparisonResult = this.comparator.compare(this.value, value);
 
-    if (comparisonResult === 0) {
+    if (comparisonResult > 0) {
+      this.leftChildren = this.insertToTheLeft(value, index);
+    } else if (comparisonResult === 0) {
       if (this.indexes.includes(index)) {
         throw new Error("This value is already in the Tree");
       } else {
         this.indexes.push(index);
       }
-    } else if (comparisonResult > 0) {
-      this.leftChildren = this.insertToTheLeft(value, index);
     } else {
       this.rightChildren = this.insertToTheRight(value, index);
     }
@@ -239,9 +239,7 @@ class AvlTreeNode<ValueType> {
 
     if (comparisonResult > 0 && this.leftChildren) {
       this.leftChildren.searchStartingWith(selectedValues, value);
-    }
-
-    if (comparisonResult == 0) {
+    } else if (comparisonResult === 0) {
       selectedValues.push(...this.indexes);
       if (this.leftChildren) {
         this.leftChildren.searchStartingWith(selectedValues, value);
@@ -249,9 +247,7 @@ class AvlTreeNode<ValueType> {
       if (this.rightChildren) {
         this.rightChildren.searchStartingWith(selectedValues, value);
       }
-    }
-
-    if (comparisonResult < 0 && this.rightChildren) {
+    } else if (comparisonResult < 0 && this.rightChildren) {
       this.rightChildren.searchStartingWith(selectedValues, value);
     }
 
