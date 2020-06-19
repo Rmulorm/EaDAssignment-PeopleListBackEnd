@@ -59,9 +59,7 @@ class AvlTreeNode<ValueType> {
       } else {
         this.indexes.push(index);
       }
-    }
-
-    if (comparisonResult > 0) {
+    } else if (comparisonResult > 0) {
       this.leftChildren = this.insertToTheLeft(value, index);
     } else {
       this.rightChildren = this.insertToTheRight(value, index);
@@ -250,7 +248,7 @@ class AvlTreeNode<ValueType> {
       return null;
   }
 
-  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType) : number[] {
+  private getMatchesOnChildTree(children: AvlTreeNode<ValueType> | null, value: ValueType): number[] {
     if (!children)
       return new Array<number>();
 
@@ -262,9 +260,29 @@ class AvlTreeNode<ValueType> {
   }
 
   public findRange(beginValue: ValueType, endValue: ValueType): number[] | null {
-    return new Array<number>();
+    const selectedValues = new Array<number>();
+
+    return this.searchRange(selectedValues, beginValue, endValue);
   }
 
+  public searchRange(selectedValues: number[], beginValue: ValueType, endValue: ValueType): number[] | null {
+    const beginComparisonResult = this.comparator.compare(this.value, beginValue);
+    const endComparisonResult = this.comparator.compare(this.value, endValue);
+
+    if (beginComparisonResult > 0 && this.leftChildren) {
+      this.leftChildren.searchRange(selectedValues, beginValue, endValue);
+    }
+
+    if (beginComparisonResult >= 0 && endComparisonResult <= 0) {
+      selectedValues.push(...this.indexes);
+    }
+
+    if (endComparisonResult < 0 && this.rightChildren) {
+      this.rightChildren.searchRange(selectedValues, beginValue, endValue);
+    }
+
+    return selectedValues;
+  }
 };
 
 export default AvlTreeNode;
