@@ -59,9 +59,7 @@ class AvlTreeNode<ValueType> {
       } else {
         this.indexes.push(index);
       }
-    }
-
-    if (comparisonResult > 0) {
+    } else if (comparisonResult > 0) {
       this.leftChildren = this.insertToTheLeft(value, index);
     } else {
       this.rightChildren = this.insertToTheRight(value, index);
