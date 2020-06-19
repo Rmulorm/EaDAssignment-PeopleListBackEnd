@@ -42,6 +42,22 @@ const queryByCPf = (queriedCpf: string): Promise<Person[]> => {
   })
 }
 
+
+const queryByName = (queriedName: string): Promise<Person[]> => {
+  return new Promise((resolve, reject) => {
+    const name = queriedName;
+    if (!name) {
+      reject(new ReferenceError("Filter 'name' must be a string"));
+    }
+    try {
+      const people = peopleList.getByName(name);
+      resolve(people);
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+      
 const queryDateRange = (queriedDateBegin: string, queriedDateEnd: string): Promise<Person[]> => {
   return new Promise((resolve, reject) => {
     const beginDate = new Date(queriedDateBegin);
@@ -85,7 +101,16 @@ export default {
           response.status(404).send(error);
       });
     } else if (request.query.name && typeof request.query.name === 'string') {
-      // Insert here code to queryByName
+      queryByName(request.query.name)
+      .then((people) => {
+        response.status(200).json(people);
+      })
+      .catch((error) => {
+        if (error instanceof ReferenceError)
+          response.status(400).send("Filter 'name' must be a string");
+
+          response.status(404).send(error);
+      });
     } else if (request.query.beginDate && typeof request.query.beginDate === 'string' && request.query.endDate && typeof request.query.endDate === 'string') {
       queryDateRange(request.query.beginDate, request.query.endDate)
       .then((people) => {

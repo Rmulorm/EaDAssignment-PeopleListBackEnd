@@ -31,11 +31,19 @@ class AvlTree<ValueType> {
     return this.root.find(value);
   }
 
+
+  public findStartingWith(value: string): number[] | null {
+    if (!this.root)
+      throw new Error ("Tree is empty");
+
+    return this.root.findStartingWith(value);
+
   public findInRange(beginValue: ValueType, endValue: ValueType): number[] | null {
     if (!this.root)
       throw new Error("Tree is empty");
 
       return this.root.findRange(beginValue, endValue);
+
   }
 };
 
