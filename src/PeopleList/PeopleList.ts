@@ -66,12 +66,12 @@ class PeopleList {
   }
 
   private parseDate(date: string): Date {
-    return new Date(`${date.substring(6)}/${date.substring(3,5)}/${date.substring(0,2)}`);
+    return new Date(`${date.substring(6)}/${date.substring(3, 5)}/${date.substring(0, 2)}`);
   }
 
   public get(): Person[] {
     if (this.list.length === 0)
-      throw new Error ("List is empty");
+      throw new Error("List is empty");
 
     return this.list;
   }
@@ -84,7 +84,20 @@ class PeopleList {
     }
 
     const personReturn = new Array<Person>();
-    personIndexes.forEach((index) => { personReturn.push(this.list[index]) } );
+    personIndexes.forEach((index) => { personReturn.push(this.list[index]) });
+
+    return personReturn;
+  }
+
+  public getByDateRange(beginDate: Date, endDate: Date): Person[] {
+    const personIndexes = this.birthDayTree.findInRange(beginDate, endDate);
+
+    if (!personIndexes) {
+      throw new Error(`Person with birthday between ${beginDate.toDateString} and ${endDate.toDateString} doesn't exist.`)
+    }
+
+    const personReturn = new Array<Person>();
+    personIndexes.forEach((index) => { personReturn.push(this.list[index]) });
 
     return personReturn;
   }
